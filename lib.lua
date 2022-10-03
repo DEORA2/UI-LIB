@@ -2659,29 +2659,32 @@ function library:Init()
 			dragObject:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, yPos), "Out", "Quint", 0.1, true)
 		end
 	end)
-
-	local Old_index
-	Old_index = hookmetamethod(game, "__index", function(t, i)
-		if checkcaller() then return Old_index(t, i) end
-
-		if library and i == "MouseIconEnabled" then
-			return library.mousestate
-		end
-
-		return Old_index(t, i)
-	end)
-
-	local Old_new
-	Old_new = hookmetamethod(game, "__newindex", function(t, i, v)
-		if checkcaller() then return Old_new(t, i, v) end
-
-		if library and i == "MouseIconEnabled" then
-			library.mousestate = v
-			if library.open then return end
-		end
-
-		return Old_new(t, i, v)
-	end)
+    LPH_JIT_MAX(function()
+    	local Old_index
+    	Old_index = hookmetamethod(game, "__index", function(t, i)
+    		if checkcaller() then return Old_index(t, i) end
+    
+    		if library and i == "MouseIconEnabled" then
+    			return library.mousestate
+    		end
+    
+    		return Old_index(t, i)
+    	end)
+    end)();
+    
+    LPH_JIT_MAX(function()
+    	local Old_new
+    	Old_new = hookmetamethod(game, "__newindex", function(t, i, v)
+    		if checkcaller() then return Old_new(t, i, v) end
+    
+    		if library and i == "MouseIconEnabled" then
+    			library.mousestate = v
+    			if library.open then return end
+    		end
+    
+    		return Old_new(t, i, v)
+    	end)
+    end)();
 
 	if not getgenv().silent then
 		delay(1, function() self:Close() end)
