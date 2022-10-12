@@ -1,13 +1,13 @@
+if getgenv().library then
+	getgenv().library:Unload()
+end    
+
 getgenv().runService = game:GetService"RunService"
 getgenv().textService = game:GetService"TextService"
 getgenv().inputService = game:GetService"UserInputService"
 getgenv().tweenService = game:GetService"TweenService"
 
-if getgenv().library then
-	getgenv().library:Unload()
-end
-
-local library = {design = getgenv().design == "Daddy" and "Daddy" or "Daddy", tabs = {}, draggable = true, flags = {}, title = "Daddyware v1.2.0", open = false, mousestate = inputService.MouseIconEnabled, popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "dw_conf", fileext = ".uw"}
+local library = {design = getgenv().design == "kali" and "kali" or "daddyware", tabs = {}, draggable = true, flags = {}, title = "DaddyWare 1.3", open = false, mousestate = inputService.MouseIconEnabled, popup = nil, instances = {}, connections = {}, options = {}, notifications = {}, tabSize = 0, theme = {}, foldername = "dw_conf", fileext = ".DW"}
 getgenv().library = library
 
 --Locals
@@ -33,7 +33,6 @@ library.round = function(num, bracket)
 	end
 end
 
---From: https://devforum.roblox.com/t/how-to-create-a-simple-rainbow-effect-using-tweenService/221849/2
 local chromaColor
 spawn(function()
 	while library and wait() do
@@ -771,7 +770,6 @@ library.createSlider = function(option, parent)
 			library.tooltip.Position = UDim2.new(2)
 			if option ~= library.slider then
 				option.slider.BorderColor3 = Color3.new()
-				--option.fill.BorderColor3 = Color3.new()
 			end
 		end
 	end)
@@ -1278,7 +1276,6 @@ end
 library.createColorPickerWindow = function(option)
 	option.mainHolder = library:Create("TextButton", {
 		ZIndex = 4,
-		--Position = UDim2.new(1, -184, 1, 6),
 		Size = UDim2.new(0, option.trans and 200 or 184, 0, 264),
 		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 		BorderColor3 = Color3.new(),
@@ -1346,7 +1343,6 @@ library.createColorPickerWindow = function(option)
 
 	option.hexBox = option.rgbBox:Clone()
 	option.hexBox.Position = UDim2.new(0, 6, 0, 238)
-	-- option.hexBox.Size = UDim2.new(0, (option.mainHolder.AbsoluteSize.X/2 - 10), 0, 20)
 	option.hexBox.Parent = option.mainHolder
 	option.hexInput = option.hexBox.TextBox;
 
@@ -2659,32 +2655,29 @@ function library:Init()
 			dragObject:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, yPos), "Out", "Quint", 0.1, true)
 		end
 	end)
-    LPH_JIT_MAX(function()
-    	local Old_index
-    	Old_index = hookmetamethod(game, "__index", function(t, i)
-    		if checkcaller() then return Old_index(t, i) end
-    
-    		if library and i == "MouseIconEnabled" then
-    			return library.mousestate
-    		end
-    
-    		return Old_index(t, i)
-    	end)
-    end)();
-    
-    LPH_JIT_MAX(function()
-    	local Old_new
-    	Old_new = hookmetamethod(game, "__newindex", function(t, i, v)
-    		if checkcaller() then return Old_new(t, i, v) end
-    
-    		if library and i == "MouseIconEnabled" then
-    			library.mousestate = v
-    			if library.open then return end
-    		end
-    
-    		return Old_new(t, i, v)
-    	end)
-    end)();
+
+	local Old_index
+	Old_index = hookmetamethod(game, "__index", function(t, i)
+		if checkcaller() then return Old_index(t, i) end
+
+		if library and i == "MouseIconEnabled" then
+			return library.mousestate
+		end
+
+		return Old_index(t, i)
+	end)
+
+	local Old_new
+	Old_new = hookmetamethod(game, "__newindex", function(t, i, v)
+		if checkcaller() then return Old_new(t, i, v) end
+
+		if library and i == "MouseIconEnabled" then
+			library.mousestate = v
+			if library.open then return end
+		end
+
+		return Old_new(t, i, v)
+	end)
 
 	if not getgenv().silent then
 		delay(1, function() self:Close() end)
@@ -2697,10 +2690,8 @@ library.SettingsColumn1 = library.SettingsTab:AddColumn()
 
 library.SettingsMain = library.SettingsColumn:AddSection"Main"
 library.SettingsMain:AddButton({text = "Unload Cheat", nomouse = true, callback = function()
-    game.CoreGui.watermark:Destroy()
-    game.CoreGui.SpectatorsList:Destroy()
 	library:Unload()
-	getgenv().Daddy = nil
+	getgenv().daddyware = nil
 end})
 library.SettingsMain:AddBind({text = "Panic Key", callback = library.options["Unload Cheat"].callback})
 
@@ -2781,4 +2772,3 @@ library.ConfigSection:AddButton({text = "Delete", callback = function()
 		end
 	end
 end})
---LIBRARY END
