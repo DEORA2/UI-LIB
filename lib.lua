@@ -1,3 +1,125 @@
+local CF = CFrame.new
+local watermark = Instance.new("ScreenGui")
+local ScreenLabel = Instance.new("Frame")
+local Color = Instance.new("Frame")
+local UIGradient = Instance.new("UIGradient")
+local Container = Instance.new("Frame")
+local UIPadding = Instance.new("UIPadding")
+local Text = Instance.new("TextLabel")
+local Background = Instance.new("Frame")
+local UIGradient_2 = Instance.new("UIGradient")
+
+watermark.Name = "watermark"
+watermark.Parent = game.CoreGui
+
+ScreenLabel.Name = "ScreenLabel"
+ScreenLabel.Parent = watermark
+ScreenLabel.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+ScreenLabel.BackgroundTransparency = 1.000
+ScreenLabel.BorderColor3 = Color3.fromRGB(28, 28, 28)
+ScreenLabel.Position = UDim2.new(0, 2, 0.400000006, -420)
+ScreenLabel.Size = UDim2.new(0, 320, 0, 17)
+
+Color.Name = "Color"
+Color.Parent = ScreenLabel
+Color.BackgroundColor3 = Color3.fromRGB(255, 0, 255)
+Color.BorderSizePixel = 0
+Color.Size = UDim2.new(1.25, 0, 0, 2)
+Color.ZIndex = 2
+
+UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(60, 60, 60))}
+UIGradient.Rotation = 90
+UIGradient.Parent = Color
+
+Container.Name = "Container"
+Container.Parent = ScreenLabel
+Container.BackgroundTransparency = 1.000
+Container.BorderSizePixel = 0
+Container.Position = UDim2.new(0, 0, 0, 4)
+Container.Size = UDim2.new(1, 0, 0, 14)
+Container.ZIndex = 3
+
+UIPadding.Parent = Container
+UIPadding.PaddingLeft = UDim.new(0, 4)
+
+Text.Name = "Text"
+Text.Parent = Container
+Text.BackgroundTransparency = 1.000
+Text.Position = UDim2.new(0.0230769236, 0, 0, 0)
+Text.Size = UDim2.new(1, 0, 1, 0)
+Text.ZIndex = 4
+Text.Font = Enum.Font.RobotoMono
+Text.Text = "Daddyware | 00:00:00 | Oct. 17, 2021"
+Text.TextColor3 = Color3.fromRGB(65025, 65025, 65025)
+Text.TextSize = 14.000
+Text.TextStrokeTransparency = 0.000
+Text.TextXAlignment = Enum.TextXAlignment.Left
+
+Background.Name = "Background"
+Background.Parent = ScreenLabel
+Background.BackgroundColor3 = Color3.fromRGB(23, 23, 23)
+Background.BorderColor3 = Color3.fromRGB(20, 20, 20)
+Background.Size = UDim2.new(1.25, 0, 1, 0)
+
+UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(90, 90, 90))}
+UIGradient_2.Rotation = 90
+UIGradient_2.Parent = Background
+
+local function UQHM_fake_script() -- Text.LocalScript 
+local script = Instance.new('LocalScript', Text)
+local mo = "A.M."
+local mont = nil
+local RunService = game:GetService("RunService")
+RunService.RenderStepped:Connect(function(frame)
+    local l = math.fmod(tick(),86400)
+    local h = math.floor(l/3600)
+    local m = math.floor(l/60-h*60)
+    local s = math.floor(math.fmod(l,60))
+    local y = math.floor(1970+tick()/31579200)
+    local mon = {{"January",31,31},{"February",59,28},{"March",90,31},{"April",120,30},{"May",151,31},{"June",181,30},{"July",212,31},{"August",243,31},{"September",273,30},{"October",304,31},{"November",334,30},{"December",365,31}}
+    if y%4 == 0 then
+	mon[2][3] = 29
+	for i,v in pairs(mon) do
+	    if i ~= 1 then
+		v[2] = v[2] + 1
+	    end
+	end
+    end
+    local d = math.floor(tick()/86400%365.25+1)
+    for i,v in pairs(mon) do
+	if v[2]-v[3]<=d then
+	    mont = i
+	end
+    end
+    d = d + mon[mont][3]-mon[mont][2]
+    if m <= 9 then
+	m = "0" ..m
+    end
+    if s <= 9 then
+	s = "0" ..s
+    end
+    if h >= 12 then
+	mo = "P.M."
+    else
+	mo = "A.M."
+    end
+    if h > 12 then
+	h = h - 12
+    end
+    script.Parent.Text = "Daddyware | "  ..h.. ":" ..m.. ":" ..s.. " " ..mo.. " | " ..mon[mont][1].. " " ..d.. ", " ..y.. " | ".."Fps: "..math.round(1/frame)
+end)
+end
+
+coroutine.wrap(UQHM_fake_script)()
+local function QQXIOK_fake_script() -- ScreenLabel.LocalScript 
+local script = Instance.new('LocalScript', ScreenLabel)
+
+local gui = script.Parent
+gui.Draggable = false
+gui.Active = true
+end
+coroutine.wrap(QQXIOK_fake_script)()
+
 if getgenv().library then
 	getgenv().library:Unload()
 end    
@@ -2772,3 +2894,85 @@ library.ConfigSection:AddButton({text = "Delete", callback = function()
 		end
 	end
 end})
+
+	--custom notification thing, library required for this to work
+local LastNotification = 0
+function library:SendNotification(duration, message)
+	LastNotification = LastNotification + tick()
+	if LastNotification < 0.2 or not library.base then return end
+	LastNotification = 0
+	if duration then
+		duration = tonumber(duration) or 2
+		duration = duration < 2 and 2 or duration
+	else
+		duration = message
+	end
+	message = message and tostring(message) or "Empty"
+
+	--create the thing
+	local notification = library:Create("Frame", {
+		AnchorPoint = Vector2.new(1, 1),
+		Size = UDim2.new(0, 0, 0, 80),
+		Position = UDim2.new(1, -5, 1, -5),
+		BackgroundTransparency = 1,
+		BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+		BorderColor3 = Color3.fromRGB(20, 20, 20),
+		Parent = library.base
+	})
+	tweenService:Create(notification, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 240, 0, 80), BackgroundTransparency = 0}):Play()
+
+	tweenService:Create(library:Create("TextLabel", {
+		Position = UDim2.new(0, 5, 0, 25),
+		Size = UDim2.new(1, -10, 0, 40),
+		BackgroundTransparency = 1,
+		Text = tostring(message),
+		Font = Enum.Font.SourceSans,
+		TextColor3 = Color3.fromRGB(255, 255, 255),
+		TextSize = 18,
+		TextTransparency = 1,
+		TextWrapped = true,
+		Parent = notification
+	}), TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0.3), {TextTransparency = 0}):Play()
+
+	--bump existing notifications
+	for _,notification in next, library.notifications do
+		notification:TweenPosition(UDim2.new(1, -5, 1, notification.Position.Y.Offset - 85), "Out", "Quad", 0.2)
+	end
+	library.notifications[notification] = notification
+
+	wait(0.4)
+
+	--create other things
+	library:Create("Frame", {
+		Position = UDim2.new(0, 0, 0, 20),
+		Size = UDim2.new(0, 0, 0, 1),
+		BackgroundColor3 = library.flags["Menu Accent Color"],
+		BorderSizePixel = 0,
+		Parent = notification
+	}):TweenSize(UDim2.new(1, 0, 0, 1), "Out", "Linear", duration)
+
+	tweenService:Create(library:Create("TextLabel", {
+		Position = UDim2.new(0, 4, 0, 0),
+		Size = UDim2.new(0, 70, 0, 16),
+		BackgroundTransparency = 1,
+		Text = "Daddyware",
+		Font = Enum.Font.Gotham,
+		TextColor3 = library.flags["Menu Accent Color"],
+		TextSize = 16,
+		TextTransparency = 1,
+		Parent = notification
+	}), TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
+	--remove
+	delay(duration, function()
+		if not library then return end
+		library.notifications[notification] = nil
+		--bump existing notifications down
+		for _,otherNotif in next, library.notifications do
+			if otherNotif.Position.Y.Offset < notification.Position.Y.Offset then
+				otherNotif:TweenPosition(UDim2.new(1, -5, 1, otherNotif.Position.Y.Offset + 85), "Out", "Quad", 0.2)
+			end
+		end
+		notification:Destroy()
+	end)
+end
